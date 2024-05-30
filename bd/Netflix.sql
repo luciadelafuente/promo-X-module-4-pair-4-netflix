@@ -26,3 +26,6 @@ lastname VARCHAR (45) not null,
 country VARCHAR (45) not null,
 birthday DATE
 );
+
+INSERT INTO movies (title, genre, image, category, year)
+VALUES ('Pulp Fiction', 'Crimen', 'https://pics.filmaffinity.com/pulp_fiction-210382116-large.jpg', 'Top 10', '1994')
