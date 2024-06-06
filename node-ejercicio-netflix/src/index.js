@@ -44,7 +44,7 @@ async function getConnection() {
     host: 'localhost',
     database: 'netflix',
     user: 'root',
-    password: '1234',
+    password: '',
   });
   await connection.connect();
 
@@ -52,13 +52,32 @@ async function getConnection() {
 };
 
 
-//endpoint
-server.get('/movies', async (req, res) => {
+//endpoint movies
+/* server.get('/movies', async (req, res) => {
 
   let sql = 'SELECT * FROM movies';
 
   const connection = await getConnection();
   const [results] = await connection.query(sql);
+  res.json({
+    success: true,
+    movies:  results
+  });
+  connection.end();
+}); */
+
+//endpoint genre
+server.get('/movies', async (req, res) => {
+
+  const genre = req.query.genre; 
+  const sort = req.query.sort; 
+
+  console.log(genre)
+  //condicional para validar si genre = "" y sino select de los géneros
+  let sql = 'SELECT * FROM movies WHERE genre = ?';
+
+  const connection = await getConnection();
+  const [results] = await connection.query(sql, [genre]);
   res.json({
     success: true,
     movies:  results
