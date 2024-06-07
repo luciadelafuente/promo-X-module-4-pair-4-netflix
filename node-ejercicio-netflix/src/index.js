@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 
+
 // create and config server
 const server = express();
 server.use(cors());
 server.use(express.json());
+server.set('view engine', 'ejs');
 
 // init express aplication
 const serverPort = 4000;
@@ -44,7 +46,7 @@ async function getConnection() {
     host: 'localhost',
     database: 'netflix',
     user: 'root',
-    password: '',
+    password: '1234',
   });
   await connection.connect();
 
@@ -68,22 +70,38 @@ async function getConnection() {
 
 //endpoint genre
 server.get('/movies', async (req, res) => {
-
-  const genre = req.query.genre; 
-  const sort = req.query.sort; 
-
-  console.log(genre)
-  //condicional para validar si genre = "" y sino select de los géneros
-  let sql = 'SELECT * FROM movies WHERE genre = ?';
-
   const connection = await getConnection();
-  const [results] = await connection.query(sql, [genre]);
+  const genreMovies = req.query.genre; 
+
+  console.log(genreMovies);
+  //condicional para validar si genre = "" y sino select de los géneros
+  let data;
+  if(genreMovies === ""){
+    const select = "SELECT * FROM movies ORDER BY title ASC;";
+    const [results] = await connection.query(select);
+    data = results;
+  }else{
+    const select = 'SELECT * FROM movies WHERE genre = ? ORDER BY title ASC;';
+    const [results] = await connection.query(select, [genreMovies]);
+    data = results;
+  }
   res.json({
     success: true,
-    movies:  results
+    movies:  data
   });
   connection.end();
 });
+
+//End point motor plantillas id
+server.get('/movies/:idMovie', async (req, res) =>{
+  const {idMovie} = req.params;
+  const conn = await getConnection();
+  const select = "SELECT * FROM movies WHERE idMovies = ?";
+  const [results] = await conn.query(select, [idMovie]);
+  console.log(results);
+  res.render('movieId', {movies: results[0]});
+
+})
 
 //Servidor estático unir front con back
 const staticServerWeb = "./src/public-react";
