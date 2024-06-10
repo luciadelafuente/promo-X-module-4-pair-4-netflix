@@ -3,11 +3,14 @@ const cors = require('cors');
 const mysql = require('mysql2/promise');
 
 
+
 // create and config server
 const server = express();
 server.use(cors());
 server.use(express.json());
 server.set('view engine', 'ejs');
+const jwt = require('jsonwebtoken'); 
+
 
 // init express aplication
 const serverPort = 4000;
@@ -40,13 +43,12 @@ server.listen(serverPort, () => {
 // ];
 
 //Conexión con MySQL
-
 async function getConnection() {
   const connection = await mysql.createConnection({
     host: 'localhost',
     database: 'netflix',
     user: 'root',
-    password: '1234',
+    password: '',
   });
   await connection.connect();
 
@@ -102,6 +104,32 @@ server.get('/movies/:idMovie', async (req, res) =>{
   res.render('movieId', {movies: results[0]});
 
 })
+
+//endpoint para gestionar las peticiones POST:/sign-up
+server.post('/sign-up', async (req, res) => {
+  //conectamos a la DB
+  const conn = await getConnection();
+  //recogemos los datos de la usuaria
+  const {email, password} = req.body;
+  //comprobar que el usuario no exista en la DB
+  const selectEmail = "SELECT * FROM users WHERE email = ?"; 
+  const [emailResult] = await conn.query(selectEmail, [email]);
+
+  //el usuario NO existe, hacemos el insert into
+  if(emailResult.length === 0){
+    const insertUser = "INSERT INTO users (email, password) VALUES (?, ?)";
+    const [newUser] = await conn.query(insertUser, [email, password]);
+    res.status(201).json({ success: true, userId: newUser.insertId });
+    res.json({
+      success: true,
+      userId: "nuevo-id-añadido",
+    });
+  conn.end();
+} else {
+  //el usuario existe en la DB -> respondemos con msj de que ya está registrado
+  res.status(200).json({ success: false, message: "El usuario ya existe" });
+}
+});
 
 //Servidor estático unir front con back
 const staticServerWeb = "./src/public-react";
