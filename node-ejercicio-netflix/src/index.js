@@ -111,6 +111,7 @@ server.post('/sign-up', async (req, res) => {
   const conn = await getConnection();
   //recogemos los datos de la usuaria
   const {email, password} = req.body;
+  console.log(req.body);
   //comprobar que el usuario no exista en la DB
   const selectEmail = "SELECT * FROM users WHERE email = ?"; 
   const [emailResult] = await conn.query(selectEmail, [email]);
@@ -120,15 +121,11 @@ server.post('/sign-up', async (req, res) => {
     const insertUser = "INSERT INTO users (email, password) VALUES (?, ?)";
     const [newUser] = await conn.query(insertUser, [email, password]);
     res.status(201).json({ success: true, userId: newUser.insertId });
-    res.json({
-      success: true,
-      userId: "nuevo-id-añadido",
-    });
-  conn.end();
 } else {
   //el usuario existe en la DB -> respondemos con msj de que ya está registrado
   res.status(200).json({ success: false, message: "El usuario ya existe" });
 }
+conn.end();
 });
 
 //Servidor estático unir front con back
