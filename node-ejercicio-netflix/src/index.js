@@ -127,6 +127,10 @@ server.post('/sign-up', async (req, res) => {
 }
 conn.end();
 });
+//11 de junio: se registran los usuarios en la DB pero en la página sale mensaje de error
+
+
+
 
 //Servidor estático unir front con back
 const staticServerWeb = "./src/public-react";
