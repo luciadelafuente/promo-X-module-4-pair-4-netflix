@@ -115,12 +115,13 @@ server.post('/sign-up', async (req, res) => {
   //comprobar que el usuario no exista en la DB
   const selectEmail = "SELECT * FROM users WHERE email = ?"; 
   const [emailResult] = await conn.query(selectEmail, [email]);
+  console.log(emailResult);
 
   //el usuario NO existe, hacemos el insert into
   if(emailResult.length === 0){
     const insertUser = "INSERT INTO users (email, password) VALUES (?, ?)";
     const [newUser] = await conn.query(insertUser, [email, password]);
-    res.status(201).json({ success: true, userId: newUser.insertId });
+    res.status(201).json({ success: true, data: newUser });
 } else {
   //el usuario existe en la DB -> respondemos con msj de que ya está registrado
   res.status(200).json({ success: false, message: "El usuario ya existe" });

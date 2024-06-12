@@ -23,7 +23,7 @@ const sendLoginToApi = data => {
 
 // signup
 
-const sendSingUpToApi = data => {
+const sendSingUpToApi = (data) => {
   console.log('Se están enviando datos al signup:', data);
   // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR, PIENSA SI DEBE SER GET O POST, PIENSA QUÉ DATOS DEBES ENVIAR, ETC
   return fetch('http://localhost:4000/sign-up', {
@@ -33,13 +33,9 @@ const sendSingUpToApi = data => {
       'Content-Type': 'application/json'
     }})
     .then(response => response.json())
-    .then(() => {
+    .then((data) => {
       // CAMBIA EL CONTENIDO DE ESTE THEN PARA GESTIONAR LA RESPUESTA DEL SERVIDOR Y RETORNAR AL COMPONENTE APP LO QUE NECESITA
       return data;   
-      /* return {
-        success: false,
-        errorMessage: 'Usuario ya existente'
-      }; */
     });
 };
 
